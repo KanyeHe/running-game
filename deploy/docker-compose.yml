@@ -1,0 +1,5 @@
+# Compatibility entry point. The root file is the canonical service definition.
+name: running-game
+include:
+  - path: ../docker-compose.yml
+    project_directory: ..

@@ -1,0 +1,8 @@
+{
+  "name": "luzhou-paodekuai-client",
+  "version": "0.1.0",
+  "private": true,
+  "creator": {"version": "3.8.8"},
+  "scripts": {"typecheck": "tsc --noEmit -p tsconfig.json", "typecheck:core": "tsc --noEmit -p tsconfig.core.json"},
+  "devDependencies": {"typescript": "5.9.3"}
+}

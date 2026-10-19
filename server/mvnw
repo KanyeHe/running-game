@@ -1,0 +1,15 @@
+#!/bin/sh
+set -eu
+BASE=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+VERSION=3.9.11
+DIST="$BASE/.mvn/wrapper/apache-maven-$VERSION"
+if [ ! -x "$DIST/bin/mvn" ]; then
+  URL="https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/$VERSION/apache-maven-$VERSION-bin.zip"
+  curl -fSL "$URL" -o "$BASE/.mvn/wrapper/maven.zip"
+  curl -fSL "$URL.sha512" -o "$BASE/.mvn/wrapper/maven.sha512"
+  EXPECTED=$(awk '{print $1}' "$BASE/.mvn/wrapper/maven.sha512")
+  ACTUAL=$(sha512sum "$BASE/.mvn/wrapper/maven.zip" | awk '{print $1}')
+  [ "$EXPECTED" = "$ACTUAL" ] || { echo 'Maven distribution checksum mismatch' >&2; exit 1; }
+  unzip -q "$BASE/.mvn/wrapper/maven.zip" -d "$BASE/.mvn/wrapper"
+fi
+exec "$DIST/bin/mvn" -gs "$BASE/.mvn/settings.xml" -s "$BASE/.mvn/settings.xml" "-Dmaven.repo.local=$BASE/../.tools/m2" "$@"

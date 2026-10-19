@@ -1,0 +1,65 @@
+name: running-game
+
+services:
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: paodekuai
+      MYSQL_USER: game
+      MYSQL_PASSWORD: ${DB_PASSWORD:-localdev}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root-localdev}
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=\"$$MYSQL_PASSWORD\" mysql --protocol=TCP -h 127.0.0.1 -u\"$$MYSQL_USER\" \"$$MYSQL_DATABASE\" --silent --execute='SELECT 1'"]
+      interval: 5s
+      timeout: 5s
+      start_period: 30s
+      retries: 40
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "3"}
+
+  redis:
+    image: redis:7.4-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "3"}
+
+  server:
+    image: ${APP_IMAGE:-running-game/server}:${APP_TAG:-0.1.0}
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: persistent
+      DB_URL: "jdbc:mysql://mysql:3306/paodekuai?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC"
+      DB_USER: game
+      DB_PASSWORD: ${DB_PASSWORD:-localdev}
+      REDIS_HOST: redis
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:8080,http://127.0.0.1:8080,http://localhost:5173,http://127.0.0.1:5173}
+      SERVER_SHUTDOWN: graceful
+    depends_on:
+      mysql: {condition: service_healthy}
+      redis: {condition: service_healthy}
+    stop_grace_period: 30s
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "3"}
+
+volumes:
+  mysql-data:
+  redis-data:

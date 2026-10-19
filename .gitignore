@@ -1,0 +1,13 @@
+server/target/
+client/node_modules/
+client/temp/
+client/library/
+client/build/
+.tools/
+*.log
+.env
+web/node_modules/
+server/.mvn/wrapper/apache-maven-*/
+server/.mvn/wrapper/maven.*
+.github/
+.dockerignore
