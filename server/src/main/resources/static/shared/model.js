@@ -9,5 +9,10 @@ export function cardText(id) {
     if (id >= 52)
         return id === 52 ? '小王' : '大王';
     const rank = id % 13 + 1;
-    return `${['♠', '♥', '♣', '♦'][Math.floor(id / 13)]}${{ 1: 'A', 11: 'J', 12: 'Q', 13: 'K' }[rank] ?? rank}`;
+    return `${['♠', '♥', '♣', '♦'][Math.floor(id / 13)]}${{
+        1: 'A',
+        11: 'J',
+        12: 'Q',
+        13: 'K'
+    }[rank] ?? rank}`;
 }

@@ -6,8 +6,15 @@ export class Selection {
         this.selected = new Set();
         this.hintIndex = 0;
     }
-    reset(candidates) { this.candidates = candidates; this.selected.clear(); this.hintIndex = 0; this.preferred = undefined; }
-    enabled(id) { return this.candidates.some(c => c.cardIds.includes(id)); }
+    reset(candidates) {
+        this.candidates = candidates;
+        this.selected.clear();
+        this.hintIndex = 0;
+        this.preferred = undefined;
+    }
+    enabled(id) {
+        return this.candidates.some(c => c.cardIds.includes(id));
+    }
     toggle(id) {
         this.preferred = undefined;
         if (this.selected.has(id)) {

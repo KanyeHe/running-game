@@ -5,11 +5,15 @@
 ## 导入与预览（尚未在当前机器执行）
 
 1. Cocos Dashboard 导入本目录，使用 Creator 3.8.8。等待导入和脚本编译。
-2. 打开 `assets/scenes/Main.scene`。源场景包含 `Game` 节点和 Bootstrap 入口。入口创建 Canvas、正交 UI Camera 和 GameTable。
-3. `GameTable.ts` 的 `serverUrl` 默认 `http://localhost:8080`。手机联调须改为可访问的服务器地址；本机 localhost 不指向开发电脑。
-4. 若导入器提示入口丢失，在场景根节点下创建空节点并添加 `Bootstrap` 组件，保存；请保留源码和 `.meta` 的 UUID 配对。这是待编辑器验证的兼容性恢复步骤。
+2. 打开 `assets/scenes/Main.scene`。源场景包含 `Game` 节点和 Bootstrap 入口。入口创建 Canvas、正交 UI
+   Camera 和 GameTable。
+3. `GameTable.ts` 的 `serverUrl` 默认 `http://localhost:8080`。手机联调须改为可访问的服务器地址；本机
+   localhost 不指向开发电脑。
+4. 若导入器提示入口丢失，在场景根节点下创建空节点并添加 `Bootstrap` 组件，保存；请保留源码和 `.meta` 的
+   UUID 配对。这是待编辑器验证的兼容性恢复步骤。
 5. 服务端启动后浏览器预览。四个独立浏览器配置/隐私会话分别运行，创建/加入同一个房间，四人准备。
-6. `npm install`，`npm run typecheck:core`。Creator 生成 `temp/tsconfig.cocos.json` 后运行 `npm run typecheck` 验证全部引擎代码，不能用模拟 cc 类型代替真实验证。
+6. `npm install`，`npm run typecheck:core`。Creator 生成 `temp/tsconfig.cocos.json` 后运行
+   `npm run typecheck` 验证全部引擎代码，不能用模拟 cc 类型代替真实验证。
 
 ## 操作
 
@@ -25,10 +29,12 @@
 
 1. 构建发布面板选择微信小游戏（`wechatgame`）。添加 Main.scene 为首场景，横屏，填写自己的真实 AppID。
 2. 将服务端配置为 HTTPS/WSS；微信后台分别配置 request 和 socket 合法域名。
-3. 本源码通过 `wx.request`、`wx.connectSocket` 的 SocketTask、`wx` 本地存储适配小程序；浏览器预览使用 fetch/WebSocket/localStorage。
+3. 本源码通过 `wx.request`、`wx.connectSocket` 的 SocketTask、`wx` 本地存储适配小程序；浏览器预览使用
+   fetch/WebSocket/localStorage。
 4. 在微信开发者工具导入编辑器输出目录，执行真机调试。四台独立设备加入同房间，验证准备、发牌、出牌、提示、断网重连及结算。
 5. 通过 [测试清单](../docs/test-plan.md) 后再上传体验版。当前未生成微信构建包，也未上传或发布。
 
 非实时登录为 MVP 游客会话；尚未接入 `wx.login` 的服务端 code2Session 和真实用户绑定。
 
-场景和 UUID 可用 `python scripts/create-scene.py` 在仓库根目录重新生成。源场景配置须由真实 Creator 导入和验证；生成 JSON 不等于构建成功。
+场景和 UUID 可用 `python scripts/create-scene.py` 在仓库根目录重新生成。源场景配置须由真实 Creator
+导入和验证；生成 JSON 不等于构建成功。

@@ -11,3 +11,4 @@ server/.mvn/wrapper/apache-maven-*/
 server/.mvn/wrapper/maven.*
 .github/
 .dockerignore
+.idea/

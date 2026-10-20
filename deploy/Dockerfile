@@ -32,3 +32,6 @@ USER 10001:10001
 HEALTHCHECK --interval=20s --timeout=10s --start-period=60s --retries=5 \
     CMD ["java", "-Xms16m", "-Xmx32m", "-cp", "/app/health", "HealthCheck"]
 ENTRYPOINT ["java","-jar","app.jar"]
+
+# 构建命令
+# docker build -f deploy/Dockerfile -t running-game/server:0.1.0 .

@@ -1,5 +1,14 @@
 $ErrorActionPreference='Stop'
 $base=Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+$java=if($env:JAVA_HOME){Join-Path $env:JAVA_HOME 'bin/java.exe'}else{'java'}
+# Windows PowerShell 将 Java 的 stderr 当作错误流，暂时允许捕获版本输出。
+$oldPreference=$ErrorActionPreference
+$ErrorActionPreference='Continue'
+$javaInfo=(& $java -XshowSettings:properties -version 2>&1 | Out-String)
+$ErrorActionPreference=$oldPreference
+if($javaInfo -notmatch 'java.specification.version = 25\s') {
+  throw 'JDK 25 is required. Set JAVA_HOME to JDK 25.'
+}
 $version='3.9.11'
 $maven=Join-Path $PSScriptRoot "apache-maven-$version/bin/mvn.cmd"
 if(!(Test-Path $maven)) {
@@ -10,5 +19,5 @@ if(!(Test-Path $maven)) {
   if((Get-FileHash $zip -Algorithm SHA512).Hash -ne $expected){throw 'Maven distribution checksum mismatch'}
   Expand-Archive -LiteralPath $zip -DestinationPath $PSScriptRoot -Force
 }
-& $maven -gs "$base/.mvn/settings.xml" -s "$base/.mvn/settings.xml" "-Dmaven.repo.local=$base/../.tools/m2" @args
+& $maven -f "$base/pom.xml" -gs "$base/.mvn/settings.xml" -s "$base/.mvn/settings.xml" "-Dmaven.repo.local=$base/../.tools/m2" @args
 exit $LASTEXITCODE

@@ -2,56 +2,124 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#143c33">
-  <meta name="description" content="泸州跑得快，四人实时联机 HTML5 测试牌桌。">
+  <meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport">
+  <meta content="#143c33" name="theme-color">
+  <meta content="泸州跑得快，四人实时联机 HTML5 测试牌桌。" name="description">
   <title>泸州跑得快 · H5 牌桌</title>
-  <link rel="stylesheet" href="./app.css">
+  <link href="./app.css" rel="stylesheet">
 </head>
 <body>
-  <header class="topbar">
-    <a class="brand" href="./"><span class="brand-mark">♠</span><span>泸州跑得快<small>LUZHOU · CARD CLUB</small></span></a>
-    <div class="top-actions"><span class="edition">H5 测试版</span><a href="./test.html" target="_blank" rel="noopener">四窗口测试 ↗</a><button id="help-button" class="icon-button" aria-label="玩法说明">?</button></div>
-  </header>
-  <main class="layout">
-    <aside class="sidebar">
-      <div class="eyebrow">LET'S PLAY</div>
-      <h1>好牌，<br>一起打。</h1>
-      <p class="intro">开一桌，邀三位好友。<br>一副牌里的泸州时光。</p>
-      <section id="room-form" class="room-form" aria-label="房间设置">
-        <label for="nickname">你的昵称</label><input id="nickname" maxlength="24" placeholder="输入昵称" autocomplete="nickname">
-        <label for="room-input">房间号</label><div class="room-input-row"><input id="room-input" maxlength="64" placeholder="6–64 位字母或数字" autocomplete="off"><button id="random-room" class="icon-button" aria-label="生成房间号">⟳</button></div>
-        <label for="score-plan">积分方案</label><select id="score-plan"><option value="low">轻松局 · 1 / 2 / 4 / 6</option><option value="high">进阶局 · 3 / 5 / 10 / 15</option></select>
-        <div class="lobby-actions"><button id="create-button" class="primary">创建房间</button><button id="join-button" class="secondary">加入房间</button></div>
-      </section>
-      <section class="room-details" id="room-details" hidden><span class="eyebrow">当前房间</span><strong id="room-number"></strong><button id="copy-invite" class="text-button">复制邀请链接 ↗</button><p id="room-summary"></p><button id="ready-button" class="primary">准备开局</button></section>
-      <div class="sidebar-bottom"><span class="status-dot" id="status-dot"></span><span id="connection-status" role="status">尚未连接</span><button id="reconnect-button" class="text-button" hidden>重新连接</button></div>
-      <details class="server-settings"><summary>连接设置</summary><label for="server-input">服务端地址</label><input id="server-input" type="url" placeholder="默认与网页同地址"><p>仅静态预览时可填 http://localhost:8080</p><button id="save-server" class="secondary">保存并重载</button><button id="new-identity" class="text-button">更换测试身份</button></details>
-    </aside>
-    <section class="game-area" aria-label="四人牌桌">
-      <div class="table-topline"><span id="table-state">等待入座</span><span id="round-label">四人 · 13 张手牌</span></div>
-      <div class="felt">
-        <div class="felt-border"></div>
-        <article id="seat-top" class="seat seat-top"></article>
-        <article id="seat-left" class="seat seat-left"></article>
-        <article id="seat-right" class="seat seat-right"></article>
-        <div class="table-center">
-          <div id="table-idle"><div class="table-emblem">♠</div><h2>泸州跑得快</h2><span>一桌四友 · 有牌必出</span><p id="idle-message">创建或加入房间，开始这一局</p></div>
-          <div id="played-area" hidden><div id="played-caption"></div><div id="played-cards" class="played-cards"></div></div>
-          <div id="turn-countdown" class="countdown" hidden></div>
-        </div>
-        <article id="seat-self" class="seat seat-self"></article>
-        <div id="table-notice" class="table-notice" aria-live="polite"></div>
+<header class="topbar">
+  <a class="brand" href="./"><span class="brand-mark">♠</span><span>泸州跑得快<small>LUZHOU · CARD CLUB</small></span></a>
+  <div class="top-actions"><span class="edition">H5 测试版</span><a href="./test.html"
+                                                                    rel="noopener" target="_blank">四窗口测试
+    ↗</a>
+    <button aria-label="玩法说明" class="icon-button" id="help-button">?</button>
+  </div>
+</header>
+<main class="layout">
+  <aside class="sidebar">
+    <div class="eyebrow">LET'S PLAY</div>
+    <h1>好牌，<br>一起打。</h1>
+    <p class="intro">开一桌，邀三位好友。<br>一副牌里的泸州时光。</p>
+    <section aria-label="房间设置" class="room-form" id="room-form">
+      <label for="nickname">你的昵称</label><input autocomplete="nickname" id="nickname"
+                                                   maxlength="24" placeholder="输入昵称">
+      <label for="room-input">房间号</label>
+      <div class="room-input-row"><input autocomplete="off" id="room-input"
+                                         maxlength="64" placeholder="6–64 位字母或数字">
+        <button aria-label="生成房间号" class="icon-button" id="random-room">⟳</button>
       </div>
-      <div class="hand-zone"><div class="hand-heading"><span id="hand-title">我的手牌</span><span id="selection-description">合法手牌将自动高亮</span></div><div id="hand" class="hand" aria-label="我的手牌"><p class="empty-hand">开局后，手牌将在这里显示</p></div></div>
-      <div class="action-bar"><span id="action-hint">四位玩家准备后，由服务端洗牌发牌。</span><div><button id="clear-button" class="secondary" disabled>重选</button><button id="hint-button" class="secondary" disabled>提示 <span id="hint-count"></span></button><button id="play-button" class="primary play-button" disabled>出牌 →</button></div></div>
-      <footer class="table-footer"><span>仅娱乐积分</span><span>演示规则 demo-v1 · 部分地方规则待确认</span><button id="events-toggle" class="text-button">对局记录 ↓</button></footer>
-      <ol id="event-log" class="event-log" hidden></ol>
+      <label for="score-plan">积分方案</label><select id="score-plan">
+      <option value="low">轻松局 · 1 / 2 / 4 / 6</option>
+      <option value="high">进阶局 · 3 / 5 / 10 / 15</option>
+    </select>
+      <div class="lobby-actions">
+        <button class="primary" id="create-button">创建房间</button>
+        <button class="secondary" id="join-button">加入房间</button>
+      </div>
     </section>
-  </main>
-  <div id="toast" class="toast" role="status" hidden></div>
-  <dialog id="settlement"><span class="eyebrow">ROUND COMPLETE</span><h2 id="winner-heading"></h2><div id="settlement-scores"></div><p>本局娱乐积分 · 炸弹分已计入</p><div class="dialog-actions"><button id="settlement-close" class="secondary">查看牌桌</button><button id="next-round" class="primary">准备下一局</button></div></dialog>
-  <dialog id="help-dialog"><span class="eyebrow">HOW TO PLAY</span><h2>一桌四友，有牌必出。</h2><p>四人各 13 张，大小王作癞子。首局由持有黑桃 3 的玩家先出，首手必须含黑桃 3。</p><p>点击手牌选择，点击「提示」循环合法组合；无牌可压时，服务端自动跳过。有合法响应时，可以自由选择普通牌型或炸弹。</p><p>灰色手牌当前不可出。倒计时归零后默认等待玩家，不自动过牌。当前采用演示规则，完整地方规则仍待确认。</p><button id="help-close" class="primary">知道了</button></dialog>
-  <script type="module" src="./app.js"></script>
+    <section class="room-details" hidden id="room-details"><span
+        class="eyebrow">当前房间</span><strong id="room-number"></strong>
+      <button class="text-button" id="copy-invite">复制邀请链接 ↗</button>
+      <p id="room-summary"></p>
+      <button class="primary" id="ready-button">准备开局</button>
+    </section>
+    <div class="sidebar-bottom"><span class="status-dot" id="status-dot"></span><span
+        id="connection-status" role="status">尚未连接</span>
+      <button class="text-button" hidden id="reconnect-button">重新连接</button>
+    </div>
+    <details class="server-settings">
+      <summary>连接设置</summary>
+      <label for="server-input">服务端地址</label><input id="server-input" placeholder="默认与网页同地址"
+                                                         type="url">
+      <p>仅静态预览时可填 http://localhost:8080</p>
+      <button class="secondary" id="save-server">保存并重载</button>
+      <button class="text-button" id="new-identity">更换测试身份</button>
+    </details>
+  </aside>
+  <section aria-label="四人牌桌" class="game-area">
+    <div class="table-topline"><span id="table-state">等待入座</span><span id="round-label">四人 · 13 张手牌</span>
+    </div>
+    <div class="felt">
+      <div class="felt-border"></div>
+      <article class="seat seat-top" id="seat-top"></article>
+      <article class="seat seat-left" id="seat-left"></article>
+      <article class="seat seat-right" id="seat-right"></article>
+      <div class="table-center">
+        <div id="table-idle">
+          <div class="table-emblem">♠</div>
+          <h2>泸州跑得快</h2><span>一桌四友 · 有牌必出</span>
+          <p id="idle-message">创建或加入房间，开始这一局</p></div>
+        <div hidden id="played-area">
+          <div id="played-caption"></div>
+          <div class="played-cards" id="played-cards"></div>
+        </div>
+        <div class="countdown" hidden id="turn-countdown"></div>
+      </div>
+      <article class="seat seat-self" id="seat-self"></article>
+      <div aria-live="polite" class="table-notice" id="table-notice"></div>
+    </div>
+    <div class="hand-zone">
+      <div class="hand-heading"><span id="hand-title">我的手牌</span><span
+          id="selection-description">合法手牌将自动高亮</span></div>
+      <div aria-label="我的手牌" class="hand" id="hand"><p class="empty-hand">
+        开局后，手牌将在这里显示</p></div>
+    </div>
+    <div class="action-bar"><span id="action-hint">四位玩家准备后，由服务端洗牌发牌。</span>
+      <div>
+        <button class="secondary" disabled id="clear-button">重选</button>
+        <button class="secondary" disabled id="hint-button">提示 <span id="hint-count"></span>
+        </button>
+        <button class="primary play-button" disabled id="play-button">出牌 →</button>
+      </div>
+    </div>
+    <footer class="table-footer">
+      <span>仅娱乐积分</span><span>演示规则 demo-v1 · 部分地方规则待确认</span>
+      <button class="text-button" id="events-toggle">对局记录 ↓</button>
+    </footer>
+    <ol class="event-log" hidden id="event-log"></ol>
+  </section>
+</main>
+<div class="toast" hidden id="toast" role="status"></div>
+<dialog id="settlement"><span class="eyebrow">ROUND COMPLETE</span>
+  <h2 id="winner-heading"></h2>
+  <div id="settlement-scores"></div>
+  <p>本局娱乐积分 · 炸弹分已计入</p>
+  <div class="dialog-actions">
+    <button class="secondary" id="settlement-close">查看牌桌</button>
+    <button class="primary" id="next-round">准备下一局</button>
+  </div>
+</dialog>
+<dialog id="help-dialog"><span class="eyebrow">HOW TO PLAY</span>
+  <h2>一桌四友，有牌必出。</h2>
+  <p>四人各 13 张，大小王作癞子。首局由持有黑桃 3 的玩家先出，首手必须含黑桃 3。</p>
+  <p>
+    点击手牌选择，点击「提示」循环合法组合；无牌可压时，服务端自动跳过。有合法响应时，可以自由选择普通牌型或炸弹。</p>
+  <p>
+    灰色手牌当前不可出。倒计时归零后默认等待玩家，不自动过牌。当前采用演示规则，完整地方规则仍待确认。</p>
+  <button class="primary" id="help-close">知道了</button>
+</dialog>
+<script src="./app.js" type="module"></script>
 </body>
 </html>

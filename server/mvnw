@@ -1,6 +1,13 @@
 #!/bin/sh
 set -eu
 BASE=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+JAVA_CMD=java
+if [ -n "${JAVA_HOME:-}" ]; then JAVA_CMD="$JAVA_HOME/bin/java"; fi
+JAVA_VERSION=$("$JAVA_CMD" -XshowSettings:properties -version 2>&1 | awk '/java.specification.version =/ {print $3}')
+if [ "$JAVA_VERSION" != "25" ]; then
+  echo "JDK 25 is required (current: $JAVA_VERSION). Set JAVA_HOME to JDK 25." >&2
+  exit 1
+fi
 VERSION=3.9.11
 DIST="$BASE/.mvn/wrapper/apache-maven-$VERSION"
 if [ ! -x "$DIST/bin/mvn" ]; then
@@ -8,8 +15,12 @@ if [ ! -x "$DIST/bin/mvn" ]; then
   curl -fSL "$URL" -o "$BASE/.mvn/wrapper/maven.zip"
   curl -fSL "$URL.sha512" -o "$BASE/.mvn/wrapper/maven.sha512"
   EXPECTED=$(awk '{print $1}' "$BASE/.mvn/wrapper/maven.sha512")
-  ACTUAL=$(sha512sum "$BASE/.mvn/wrapper/maven.zip" | awk '{print $1}')
+  if command -v sha512sum >/dev/null 2>&1; then
+    ACTUAL=$(sha512sum "$BASE/.mvn/wrapper/maven.zip" | awk '{print $1}')
+  else
+    ACTUAL=$(shasum -a 512 "$BASE/.mvn/wrapper/maven.zip" | awk '{print $1}')
+  fi
   [ "$EXPECTED" = "$ACTUAL" ] || { echo 'Maven distribution checksum mismatch' >&2; exit 1; }
   unzip -q "$BASE/.mvn/wrapper/maven.zip" -d "$BASE/.mvn/wrapper"
 fi
-exec "$DIST/bin/mvn" -gs "$BASE/.mvn/settings.xml" -s "$BASE/.mvn/settings.xml" "-Dmaven.repo.local=$BASE/../.tools/m2" "$@"
+exec "$DIST/bin/mvn" -f "$BASE/pom.xml" -gs "$BASE/.mvn/settings.xml" -s "$BASE/.mvn/settings.xml" "-Dmaven.repo.local=$BASE/../.tools/m2" "$@"
